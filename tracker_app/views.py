@@ -65,11 +65,17 @@ class AssignView(View):
         projects = Project.objects.filter(project_manager__username=request.session.get('username'))
         developers = Developer.objects.all()
 
-        new_project = Project.objects.create(name=project_name, priority=project_priority,
+        if len(project_developers) >= 1:
+            new_project = Project.objects.create(name=project_name, priority=project_priority,
                                              project_manager=Manager.objects.get(username=request.session['username']))
-        for dev in project_developers:
-            new_project.developer.add(Developer.objects.get(username=dev))
+            for dev in project_developers:
+                new_project.developer.add(Developer.objects.get(username=dev))
 
-        new_project.save()
-        return render(request, "main/assign.html", {"projects": projects, "developers": developers})
+            new_project.save()
+
+        if len(project_developers) >= 1:
+            message = 'Project Saved and Assigned Successfully'
+        else:
+            message = 'Not Saved and Assigned Successfully'
+        return render(request, "main/assign.html", {"projects": projects, "developers": developers, "message": message})
 
