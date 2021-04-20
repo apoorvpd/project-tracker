@@ -46,3 +46,30 @@ class ProjectView(View):
         projects = Project.objects.filter(project_manager__username=request.session.get('username'))
         return render(request, "main/project.html", {"projects": projects})
 
+
+class AssignView(View):
+    def get(self, request):
+        if not request.session.get("username"):
+            return redirect("home")
+
+        projects = Project.objects.filter(project_manager__username=request.session.get('username'))
+        developers = Developer.objects.all()
+        return render(request, "main/assign.html", {"projects": projects, "developers": developers})
+
+    def post(self, request):
+        project_name = request.POST['name']
+        project_priority = request.POST['priority']
+        project_developers = request.POST.getlist('developers')
+        print(project_name, project_priority, project_developers)
+
+        projects = Project.objects.filter(project_manager__username=request.session.get('username'))
+        developers = Developer.objects.all()
+
+        new_project = Project.objects.create(name=project_name, priority=project_priority,
+                                             project_manager=Manager.objects.get(username=request.session['username']))
+        for dev in project_developers:
+            new_project.developer.add(Developer.objects.get(username=dev))
+
+        new_project.save()
+        return render(request, "main/assign.html", {"projects": projects, "developers": developers})
+
