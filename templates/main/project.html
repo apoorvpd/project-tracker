@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+    <form action="{% url 'projects' %}" method="post">
+        {% csrf_token %}
+      <div class="form-group">
+        <label for="name">Project Name</label>
+        <input type="text" class="form-control" id="name" placeholder="Project Name.." name="name">
+      </div>
+      <div class="form-group">
+        <label for="priority">Example select</label>
+        <select class="form-control" id="priority" name="priority">
+          <option>High</option>
+          <option>Low</option>
+          <option>Medium</option>
+        </select>
+      </div>
+
+        <button type="submit" class="btn btn-secondary">ADD PROJECT</button>
+
+    </form>
+    <table class="table mt-5" >
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Project Name</th>
+              <th scope="col">Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+           {% for project in projects %}
+            <tr>
+               <th scope="row">{{ project.name }}</th>
+               <td>{{ project.priority }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+    </table>
+      <a href="{% url 'home' %}" class="btn btn-info">LOGOUT</a>
+    </div>
+
+{% endblock  %}
